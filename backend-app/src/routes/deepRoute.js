@@ -3,7 +3,7 @@ const deepController = require("../controllers/deepController")
 
 
 router.post("/deep",deepController.insertDeep);
-router.get("/cadCaracteriticas",deepController.selectDeep);
+router.get("/deep",deepController.selectDeep);
 
 
 module.exports = router

@@ -8,16 +8,16 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: true,       
     },
-    initBathymetryNotif:{
-        type: String,
+    notifyInitBathymetry:{
+        type: Boolean,
         unique: true
     },
-    endBathymetryNotif:{
-        type: String,
+    notifyEndBathymetry:{
+        type: Boolean,
         unique: true
     },
-    iBat:{
-        type: String,
+    notifyObstacle:{
+        type: Boolean,
         unique: true
     },
 

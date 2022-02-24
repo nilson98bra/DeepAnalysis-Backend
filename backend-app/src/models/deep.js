@@ -2,7 +2,7 @@ const mongoose = require("../database/mongodb")
 
 const DeepSchema = mongoose.Schema({
     _id:{
-        type: String,
+        type: Number,
         unique: true
     },
     coordinate:{
