@@ -4,6 +4,10 @@ const UserSchema = mongoose.Schema({
     _id:{
         type: String
     },
+    phone:{
+        type: String,
+        required: true,  
+    },
     nameUser:{
         type: String,
         required: true,       
