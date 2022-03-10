@@ -14,15 +14,15 @@ const UserSchema = mongoose.Schema({
     },
     notifyInitBathymetry:{
         type: Boolean,
-        unique: true
+       
     },
     notifyEndBathymetry:{
         type: Boolean,
-        unique: true
+        
     },
     notifyObstacle:{
         type: Boolean,
-        unique: true
+        
     },
 
 },{ versionKey: false })

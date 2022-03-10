@@ -5,7 +5,7 @@ const RouteSchema = mongoose.Schema({
         type: Number,
         unique: true
     },
-    coordinate1:{
+    coordinateLT:{
         type: {
             type: String,
             enum: ['Point'],
@@ -17,7 +17,7 @@ const RouteSchema = mongoose.Schema({
           }
         
     },
-    coordinate2:{
+    coordinateRT:{
         type: {
             type: String,
             enum: ['Point'],
@@ -29,7 +29,7 @@ const RouteSchema = mongoose.Schema({
           }
         
     },
-    coordinate3:{
+    coordinateLB:{
         type: {
             type: String,
             enum: ['Point'],
@@ -41,7 +41,7 @@ const RouteSchema = mongoose.Schema({
           }
         
     },
-    coordinate4:{
+    coordinateRB:{
         type: {
             type: String,
             enum: ['Point'],
