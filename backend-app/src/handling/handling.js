@@ -1,24 +1,26 @@
-exports.handling = (args,maxs=[],mins=[])=>{
-    const erros = Object.keys(args).map((key,index)=>{
+exports.validateString = (args,maxs=[],mins=[])=>{
+    let erros = Object.keys(args).map((key,index)=>{
+      const listErros = []
        if(!args[key]){
        
-           return `Campo ${key} não pode ser vazio!`
+          listErros.push(`Campo '${key}' não pode ser vazio!`)
        }
-       else if(typeof(maxs[index])!="boolean"  && (String(args[key]).length > maxs[index] || String(args[key]).length < mins[index]) && maxs[index]==mins[index]){
-        return `Campo ${key} deve ter exatamente ${maxs[index]} caracteres!`
+       if(String(args[key]).length != maxs[index] && maxs[index]==mins[index]){    
+          listErros.push(`Campo '${key}' deve ter exatamente ${maxs[index]} caracteres!`)
        }
-       else if(typeof(maxs[index])!="boolean" && String(args[key]).length > maxs[index]){
-    
-           return `Campo ${key} deve ter menos que ${maxs[index]} caracteres!`
+       if(maxs[index]!=mins[index]){
+          if( String(args[key]).length > maxs[index]){   
+              listErros.push(`Campo '${key}' deve ter menos que ${maxs[index]} caracteres!`)
+          }
+          if (String(args[key]).length < mins[index]){
+            listErros.push(`Campo '${key}' deve ter mais que ${mins[index]} caracteres!`)
+          }
        }
-       else if (typeof(mins[index])!="boolean" && String(args[key]).length < mins[index]){
 
-        return `Campo ${key} deve ter mais que ${mins[index]} caracteres!`
-
-       }
+       return listErros.length == 0? null : listErros
        
    }).filter(curr => !!curr)
-
+  
    return erros
 }
 
@@ -32,9 +34,41 @@ exports.validPhoneNumber = (phone)=>{
   
 }
 
+exports.validNumericValues = (args,maxs=[],mins=[])=>{
+  
+  let erros = Object.keys(args).map((key,index)=>{
+    const listErros = []
+     if(!args[key]){
+     
+         listErros.push(`Campo '${key}' não pode ser vazio!`)
+     }
+     if(!!isNaN(args[key])){
+
+      listErros.push(`Campo '${key}' deve ser numérico!`)
+
+     }
+     if(args[key] > maxs[index]){
+  
+      listErros.push(`Campo '${key}' deve ter menos que ${maxs[index]} caracteres!`)
+     }
+     if (args[key] < mins[index]){
+
+      listErros.push(`Campo '${key}' deve ter mais que ${mins[index]} caracteres!`)
+
+     }
+
+     return listErros.length == 0? null : listErros
+     
+ }).filter(curr => !!curr)
+
+ return erros
+}
+
 exports.validCoordinates = (args) =>{
 
-  const erros = Object.keys(args).map((key)=>{
+  let erros = Object.keys(args).map((key)=>{
+    const listErros = []
+    let campoAtual
     switch(key){
       case "lt":
         campoAtual="Topo Esquerda";
@@ -48,35 +82,44 @@ exports.validCoordinates = (args) =>{
       case "rb":
         campoAtual="Direita Baixo";
         break;
+      default:
+        campoAtual="coordinate"
+        break;
       }
     
     if(!args[key].coordinates){
-      return `Campo '${campoAtual}' não pode ser vazio!`
+      listErros.push(`Campo '${campoAtual}' não pode ser vazio!`)
     }
 
-    else if(isNaN(args[key].coordinates[0])){
-      return `Latitude do campo '${campoAtual}' deve ser numérica!`
+    if(isNaN(args[key].coordinates[0])){
+      listErros.push(`Latitude do campo '${campoAtual}' deve ser numérica!`)
     }
-    else if(isNaN(args[key].coordinates[1])){
-      return `Longitude do campo '${campoAtual}' deve ser numérica!`
-    }
-
-    else if(args[key].coordinates[0] > 90 || args[key].coordinates[0] < -90){
-      return `Latitude do campo '${campoAtual}' está com valor inválido!`
-    }
-    else if(args[key].coordinates[1] > 180 || args[key].coordinates[1] < -180){
-      return `Longitude do campo '${campoAtual}' está com valor inválido!`
+    if(isNaN(args[key].coordinates[1])){
+      listErros.push(`Longitude do campo '${campoAtual}' deve ser numérica!`)
     }
 
-    else if(String(args[key].coordinates[0]).split(".")[1].length != 6){
+    if(args[key].coordinates[0] > 90 || args[key].coordinates[0] < -90){
+      listErros.push(`Latitude do campo '${campoAtual}' deve estar no intervalode 90 a -90!`)
+    }
+    if(args[key].coordinates[1] > 180 || args[key].coordinates[1] < -180){
+      listErros.push(`Longitude do campo '${campoAtual}' deve estar no intervalo de 180 a -180!`)
+    }
+
+    if(String(args[key].coordinates[0]).split(".")[1].length < 4){
  
-      return `Os decimais da latitude do campo '${campoAtual}' deve ter 6 casas!`
+      listErros.push(`Deve ter no mínimo 5 casas decimais na latitude do campo '${campoAtual}'!`)
     }
-    else if(String(args[key].coordinates[1]).split(".")[1].length != 6){
-      return `Os decimais da longitude do campo '${campoAtual}' deve ter 6 casas!`
+    if(String(args[key].coordinates[1]).split(".")[1].length < 4){
+      listErros.push(`Deve ter no mínimo 5 casas decimais na longitude do campo '${campoAtual}'!`)
     }
+
+    return listErros.length == 0? null : listErros
 
   }).filter(curr => !!curr)
-
+ 
   return erros
+}
+
+exports.validBooleanValues = (args)=>{
+  
 }

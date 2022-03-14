@@ -2,8 +2,8 @@ const router = require("express").Router()
 const deepController = require("../controllers/deepController")
 
 
-router.post("/deep",deepController.insertDeep);
-router.get("/deep",deepController.selectDeep);
+router.post("/CadDeep",deepController.insertDeep);
+router.get("/getDeeps",deepController.selectDeeps);
 
 
 module.exports = router
