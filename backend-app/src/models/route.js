@@ -2,8 +2,8 @@ const mongoose = require("../database/mongodb")
 
 const RouteSchema = mongoose.Schema({
     _id:{
-        type: Number,
-        unique: true
+        type: String,
+
     },
     coordinateLT:{
         type: {
@@ -53,6 +53,10 @@ const RouteSchema = mongoose.Schema({
           }
         
     },
+    date:{
+      type: Date,
+      required: true
+    }
 },{ versionKey: false })
 
 const Route = mongoose.model("Route", RouteSchema);

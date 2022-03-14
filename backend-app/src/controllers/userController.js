@@ -7,10 +7,16 @@ const {v4:uuid} = require("uuid")
 
 exports.cadUserPhone= async(req,res)=>{
     const {phone} = req.body
-    const erros = await handlingErrors.handling(req.body,[11],[11])
+    const erros = await handlingErrors.handling(req.body,[15],[11])
     if(erros.length){
         return res.status(400).send({error: erros.join("; ")})
     }
+    
+    let validPhone = await handlingErrors.validPhoneNumber(phone)
+    if(validPhone==false){
+        return res.status(400).send({"error": "Insira um número válido"})    
+    }
+
     const exist = await User.findOne({"phone":phone})
     if(exist){
         return res.status(400).send({"error": "Este número já está cadastrado"})    
@@ -26,6 +32,11 @@ exports.cadUserEspec= async(req,res)=>{
     const erros = await handlingErrors.handling(req.body,[11,20,true,true,true],[11,5,true,true,true])
     if(erros.length){
         return res.status(400).send({error: erros.join("; ")})
+    }
+
+    let validPhone = await handlingErrors.validPhoneNumber(phone)
+    if(validPhone==false){
+        return res.status(400).send({"error": "Insira um número válido"})    
     }
 
     const exist = await User.findOne({"phone":phone})

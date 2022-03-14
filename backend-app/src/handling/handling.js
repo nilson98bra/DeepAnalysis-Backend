@@ -20,13 +20,60 @@ exports.handling = (args,maxs=[],mins=[])=>{
 }
 
 exports.validPhoneNumber = (phone)=>{
- 
-      let phoneno = /^\+?([0-9]{2})\)?[-. ]?([0-9]{5})[-. ]?([0-9]{4})$/;
-      if((phone.value.match(phoneno)))
-        {
-          return true;
-        }
-        return false;
-        
+  phone = phone.replace("(","")
+  phone = phone.replace(")","")
+  console.log(phone)
+  const regex = /^\(?([0-9]{2})\)?[-. ]?([0-9]{5})[-. ]?([0-9]{4})$/;
+  return regex.test(phone)
+
   
+}
+
+exports.validCoordinates = (args) =>{
+
+  const erros = Object.keys(args).map((key)=>{
+    switch(key){
+      case "lt":
+        campoAtual="Topo Esquerda";
+        break;
+      case "rt":
+        campoAtual="Topo Direita";
+        break;
+      case "lb":
+        campoAtual="Esqueda Baixo";
+        break;
+      case "rb":
+        campoAtual="Direita Baixo";
+        break;
+      }
+    
+    if(!args[key].coordinates){
+      return `Campo '${campoAtual}' não pode ser vazio!`
+    }
+
+    else if(isNaN(args[key].coordinates[0])){
+      return `Latitude do campo '${campoAtual}' deve ser numérica!`
+    }
+    else if(isNaN(args[key].coordinates[1])){
+      return `Longitude do campo '${campoAtual}' deve ser numérica!`
+    }
+
+    else if(args[key].coordinates[0] > 90 || args[key].coordinates[0] < -90){
+      return `Latitude do campo '${campoAtual}' está com valor inválido!`
+    }
+    else if(args[key].coordinates[1] > 180 || args[key].coordinates[1] < -180){
+      return `Longitude do campo '${campoAtual}' está com valor inválido!`
+    }
+
+    else if(String(args[key].coordinates[0]).split(".")[1].length != 6){
+ 
+      return `Os decimais da latitude do campo '${campoAtual}' deve ter 6 casas!`
+    }
+    else if(String(args[key].coordinates[1]).split(".")[1].length != 6){
+      return `Os decimais da longitude do campo '${campoAtual}' deve ter 6 casas!`
+    }
+
+  }).filter(curr => !!curr)
+
+  return erros
 }

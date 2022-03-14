@@ -2,7 +2,8 @@ const mongoose = require("../database/mongodb")
 
 const UserSchema = mongoose.Schema({
     _id:{
-        type: String
+        type: String,
+
     },
     phone:{
         type: String,

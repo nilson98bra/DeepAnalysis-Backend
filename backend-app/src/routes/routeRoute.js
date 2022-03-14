@@ -1,8 +1,8 @@
 const router = require("express").Router()
-const userControllers = require("../controllers/userController")
+const routeControllers = require("../controllers/routeController")
 
 
-router.post("/cadRoute",userControllers.cadUserPhone);
-router.post("/login",userControllers.login);
+router.post("/cadRoute",routeControllers.cadRoute);
+router.get("/getRoute",routeControllers.getRoute);
 
 module.exports = router
