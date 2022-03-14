@@ -24,12 +24,20 @@ exports.cadRoute= async(req,res)=>{
 }
 
 exports.getRoute = async(req,res)=>{
-
+    const {_id} = req.body
+    const erros = await handlingErrors.handling(req.body,[36],[36])
+    if(erros.length){
+        return res.status(400).send({error: erros.join("; ")})
+    }
+    const rota = await Route.findOne({"_id":_id})
+    return res.status(200).send({"message":rota})
 }
 
 
-exports.getAllRoutes = async(req,res)={
+exports.getAllRoutes = async(req,res)=>{
     
+    const rotas = await Route.find({})
+    return res.status(200).send({"data":rotas})
 }
 
 

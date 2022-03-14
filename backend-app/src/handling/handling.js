@@ -4,13 +4,16 @@ exports.handling = (args,maxs=[],mins=[])=>{
        
            return `Campo ${key} não pode ser vazio!`
        }
+       else if(typeof(maxs[index])!="boolean"  && (String(args[key]).length > maxs[index] || String(args[key]).length < mins[index]) && maxs[index]==mins[index]){
+        return `Campo ${key} deve ter exatamente ${maxs[index]} caracteres!`
+       }
        else if(typeof(maxs[index])!="boolean" && String(args[key]).length > maxs[index]){
     
-           return `Campo ${key} deve ser menor que ${maxs[index]} caracteres!`
+           return `Campo ${key} deve ter menos que ${maxs[index]} caracteres!`
        }
        else if (typeof(mins[index])!="boolean" && String(args[key]).length < mins[index]){
 
-        return `Campo ${key} deve ser mais que ${mins[index]} caracteres!`
+        return `Campo ${key} deve ter mais que ${mins[index]} caracteres!`
 
        }
        
