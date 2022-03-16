@@ -22,9 +22,15 @@ const UserSchema = mongoose.Schema({
         
     },
     notifyObstacle:{
-        type: Boolean,
-        
+        type: Boolean,      
     },
+    verifyCode:{
+        type: Number
+    },
+    verifyCodeDate:{
+        type: Date,
+        required: true
+    }
 
 },{ versionKey: false })
 

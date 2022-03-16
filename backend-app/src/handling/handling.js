@@ -25,6 +25,7 @@ exports.validateString = (args,maxs=[],mins=[])=>{
 }
 
 exports.validPhoneNumber = (phone)=>{
+  phone = String(phone)
   phone = phone.replace("(","")
   phone = phone.replace(")","")
   console.log(phone)

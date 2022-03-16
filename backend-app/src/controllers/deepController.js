@@ -12,7 +12,6 @@ exports.insertDeep = async (req,res)=>{
     const stringErros = await handlingErros.validateString(stringValues, [36],[36])
     const numericErros = await handlingErros.validNumericValues(numericValues,[999],[-999])
     const coordianteErros = await handlingErros.validCoordinates(coordinateValues)
-    console.log(typeof(stringErros))
     const erros = stringErros.concat(numericErros,coordianteErros)
     if(erros){
         return res.status(400).send({"erros":erros})
