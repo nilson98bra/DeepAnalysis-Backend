@@ -15,22 +15,23 @@ const UserSchema = mongoose.Schema({
     },
     notifyInitBathymetry:{
         type: Boolean,
+        required: true
        
     },
     notifyEndBathymetry:{
         type: Boolean,
-        
+        required: true
     },
     notifyObstacle:{
-        type: Boolean,      
+        type: Boolean,   
+        required: true   
     },
-    verifyCode:{
-        type: Number
-    },
-    verifyCodeDate:{
-        type: Date,
+    provisionalRegistration:{
+        type: Boolean,
         required: true
-    }
+   
+    },
+
 
 },{ versionKey: false })
 
