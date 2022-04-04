@@ -5,22 +5,24 @@ const sendEmail = require("../config/smtp")
 
 exports.cadUserPhone= async(req,res)=>{
     try{
-        const {phone} = req.body
-        let validPhone = await handlingErrors.validPhoneNumber(phone)
-        if(validPhone==false){
-            return res.status(400).send({"error": "Insira um número válido"})    
+        const {email} = req.body
+        const emailValues = {"email":email}
+        const emailErros = await handlingErrors.validBooleanValues(emailValues)
+
+        if(emailErros){
+            return res.status(400).send({"erros":emailErros})
         }
 
-        const exist = await User.findOne({"phone":phone},{"provisionalRegistration":false})
+        const exist = await User.findOne({"email":email})
       
         if(exist){
 
             return res.status(400).send({"error": "Este número já está cadastrado"})    
         }
       
-        await User.create({
+        await User.create({ 
             _id: uuid(),
-            phone: phone,
+            email: email,
             nameUser: "Default",
             notifyInitBathymetry:false,
             notifyEndBathymetry:false,

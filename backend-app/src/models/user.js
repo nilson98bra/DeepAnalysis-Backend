@@ -5,13 +5,13 @@ const UserSchema = mongoose.Schema({
         type: String,
 
     },
-    phone:{
-        type: String,
-        required: true,  
-    },
     nameUser:{
         type: String,
         required: true,       
+    },
+    email:{
+        type: String,
+        required: true, 
     },
     notifyInitBathymetry:{
         type: Boolean,

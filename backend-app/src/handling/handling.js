@@ -47,7 +47,7 @@ exports.validateEmail = (email)=>{
     erros.push("O e-mail não pode ter menos que 16 caracteres")
   }
   if(regex.test(email)==false){
-    erros.push("O e-mail deve conter os ccaracteres '@' e '.'")
+    erros.push("O e-mail deve conter os caracteres '@' e '.'")
   }
   return erros;
 }
