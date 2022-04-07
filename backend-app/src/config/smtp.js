@@ -15,10 +15,10 @@ const transporter = nodemailer.createTransport({
 
 })
 
-const sendEmail = async function(phone,destinatary){
+const sendEmail = async function(code,destinatary){
 
     await transporter.sendMail({
-        text: `Confirmar o acesso do número ${phone} ao app?`,
+        text: `Código de verificação: ${code}`,
         subject: "Verificação de conta",
         from: `Deep Analysis <${process.env.GMAIL_USER}`,
         to: destinatary

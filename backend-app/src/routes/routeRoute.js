@@ -1,5 +1,6 @@
 const router = require("express").Router()
 const routeControllers = require("../controllers/routeController")
+const authorization = require("../middleware/authorization")
 
 
 router.post("/cadRoute",routeControllers.cadRoute);

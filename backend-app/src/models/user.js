@@ -26,10 +26,17 @@ const UserSchema = mongoose.Schema({
         type: Boolean,   
         required: true   
     },
+    verifyCode:{
+        type:String,
+        required: true
+    },
+    verifyCodeDate:{
+        type: Date,
+        required: true
+    },
     provisionalRegistration:{
         type: Boolean,
         required: true
-   
     },
 
 

@@ -1,9 +1,9 @@
 const router = require("express").Router()
 const deepController = require("../controllers/deepController")
+const authorization = require("../middleware/authorization")
 
-
-router.post("/CadDeep",deepController.insertDeep);
-router.get("/getDeeps",deepController.selectDeeps);
+router.post("/CadDeep",authorization,deepController.insertDeep);
+router.get("/getDeeps",authorization,deepController.selectDeeps);
 
 
 module.exports = router

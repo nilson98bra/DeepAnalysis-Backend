@@ -32,7 +32,6 @@ exports.validPhoneNumber = (phone)=>{
   phone = String(phone)
   phone = phone.replace("(","")
   phone = phone.replace(")","")
-
   const regex = /^\(?([0-9]{2})\)?[-. ]?([0-9]{5})[-. ]?([0-9]{4})$/;
   return regex.test(phone)
 }

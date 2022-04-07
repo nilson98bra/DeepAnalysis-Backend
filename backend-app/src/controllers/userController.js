@@ -3,23 +3,22 @@ const User = require("../models/user");
 const {v4:uuid} = require("uuid")
 const sendEmail = require("../config/smtp")
 
-exports.cadUserPhone= async(req,res)=>{
+exports.cadUserEmail= async(req,res)=>{
     try{
         const {email} = req.body
         const emailValues = {"email":email}
-        const emailErros = await handlingErrors.validBooleanValues(emailValues)
+        const emailErros = await handlingErrors.validateEmail(emailValues)
 
         if(emailErros){
             return res.status(400).send({"erros":emailErros})
         }
 
-        const exist = await User.findOne({"email":email})
+        const exist = await User.findOne({"email":email},{"provisionalRegistration":false})
       
         if(exist){
 
-            return res.status(400).send({"error": "Este número já está cadastrado"})    
+            return res.status(400).send({"error": "Este email já está cadastrado"})    
         }
-      
         await User.create({ 
             _id: uuid(),
             email: email,
@@ -27,10 +26,24 @@ exports.cadUserPhone= async(req,res)=>{
             notifyInitBathymetry:false,
             notifyEndBathymetry:false,
             notifyObstacle:false,
+            verifyCode: verifyCode,
+            verifyCodeDate: new Date().toISOString(),
             provisionalRegistration:true
         })
 
-        return res.status(200).send({"mensagem":"Número de telefone válido"})
+        const verifyCode = ((min, max)=>{
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        })(000000,999999)
+
+
+        await sendEmail(verifyCode,email)
+
+        return res.status(200).send({"message":"Código de verificação enviado"})  
+
+
+       
     }catch(error){
         return res.status(400).send({"mensagem":error})
     }
@@ -38,6 +51,25 @@ exports.cadUserPhone= async(req,res)=>{
         
 }
 
+exports.sendEmail = async(req,res)=>{
+
+    const {email} = req.body
+    const emailValues = {"email":email}
+    const emailErros = await handlingErrors.validateEmail(emailValues)
+
+    if(emailErros){
+        return res.status(400).send({"erros":emailErros})
+    }
+
+    /*const exist = await User.findOne({"email":email})
+    
+    if(exist){
+
+        return res.status(400).send({"error": "Este email já está cadastrado!"})    
+    }*/
+
+
+}
 
 exports.cadUserEspec= async(req,res)=>{
 
@@ -62,57 +94,48 @@ exports.cadUserEspec= async(req,res)=>{
 
 }
 
-exports.verifyEmail = async(req,res)=>{
+exports.verifyCode = async(req,res)=>{
     try{
-        const {_id, } = req.body
+        const {email, code} = req.body
+        const token = jwt.sign({
+            _id: user._id,
+            email: email
+        },process.env.JWT_KEY,{
+            expiresIn: "10h"
+        })
+        return res.status(200).send({"token":token})
     }catch(error){
 
     }
 }
 
-exports.sendEmail = async(req,res)=>{
-
-    try{
-        const {phone,email} = req.body
-        let validPhone = await handlingErrors.validPhoneNumber(phone)
-        let validateEmail = await handlingErrors.validateEmail(email)
-
-
-        if(validPhone==false){
-            return res.status(400).send({"error": "Insira um número válido"})    
-        }
-        const exist = await User.findOne({"phone":phone})
-        if(!exist){
-            return res.status(400).send({"error": "insira um número já cadastrado previamente"})    
-        }
-        await sendEmail(phone,email)
-        return res.status(200).send({"message":"E-mail de verificação enviado"})
-       
- 
-    }catch(error){
-        return res.status(400).send({"message":error._message})
-}
-
-
-
+exports.verifyCodeCad = async(req,res)=>{
 
 }
+
+
 
 exports.login = async(req,res)=>{
     try{
-        const {phone} = req.body
-        let validPhone = await handlingErrors.validPhoneNumber(phone)
-        if(validPhone==false){
-            return res.status(400).send({"error": "Insira um número válido"})    
+
+        const {email} = req.body
+        const emailValues = {"email":email}
+        const emailErros = await handlingErrors.validateEmail(emailValues)
+
+        if(emailErros){
+            return res.status(400).send({"erros":emailErros})
         }
 
-        const exist = await User.findOne({"phone":phone})
-        if(exist){
-            return res.status(400).send({"error": "Este número já está cadastrado"})    
-        }
+        
+        const exist = await User.findOne({"email":email})
       
+        if(!exist){
 
-        return res.status(200).send({"mensagem":"Número de telefone válido"})
+            return res.status(400).send({"error": "E-mail não encontrado"})    
+        }
+
+        return res.status(200).send({"message": true})    
+
     }catch(error){
         return res.status(400).send({"mensagem":error._message})
     }
