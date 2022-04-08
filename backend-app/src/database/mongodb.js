@@ -4,7 +4,6 @@ require('dotenv').config({path:'./.env'})
 
 const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_CLUSTER}.ak09p.mongodb.net/${process.env.MONGO_DATABASE}?retryWrites=true&w=majority`
 
-console.log(uri)
 try{
     mongoose.connect( uri, {useNewUrlParser: true, useUnifiedTopology: true})
 

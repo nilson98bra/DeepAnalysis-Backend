@@ -36,7 +36,8 @@ exports.validPhoneNumber = (phone)=>{
   return regex.test(phone)
 }
 
-exports.validateEmail = (email)=>{
+exports.validateEmail = (_email)=>{
+  let email = _email.email
   const erros = []
   var regex = /\S+@\S+\.\S+/;
   if(email.length > 40){
