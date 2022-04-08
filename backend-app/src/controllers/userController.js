@@ -54,18 +54,14 @@ exports.cadUserEmail= async(req,res)=>{
             })
         }
 
-    
         await sendEmail(verifyCode,email)
 
-        return res.status(200).send({"message":"Código de verificação enviado"})  
-
-
-       
+        return res.status(201).send({"message":"Código de verificação enviado"})  
+   
     }catch(error){
         return res.status(400).send({"mensagem":error})
     }
     
-        
 }
 
 exports.sendEmail = async(req,res)=>{
@@ -95,9 +91,9 @@ exports.sendEmail = async(req,res)=>{
 
 exports.cadUserEspec= async(req,res)=>{
 
-    const {_id, nameUser, notifyInitBathymetry, notifyEndBathymetry, notifyObstacle} = req.body
+    const {nameUser, notifyInitBathymetry, notifyEndBathymetry, notifyObstacle} = req.body
     
-    const stringValues = {"nameUser":nameUser,"_id":_id}
+    const stringValues = {"nameUser":nameUser}
     const booleanValues = {"notifyInitBathymetry":notifyInitBathymetry,
     "notifyEndBathymetry":notifyEndBathymetry,"notifyObstacle":notifyObstacle}
     const stringErros = await handlingErros.validateString(stringValues, [15,36],[4,36])
@@ -108,7 +104,7 @@ exports.cadUserEspec= async(req,res)=>{
         return res.status(400).send({"mensagem":erros})
     }
 
-    await User.findByIdAndUpdate({phone:phone},{nameUser:nameUser, 
+    await User.findByIdAndUpdate({_id:req.user._id},{nameUser:nameUser, 
         notifyInitBathymetry: notifyInitBathymetry,notifyEndBathymetry:  notifyEndBathymetry,
         notifyObstacle: notifyObstacle})
 
@@ -117,14 +113,17 @@ exports.cadUserEspec= async(req,res)=>{
 }
 
 exports.verifyCode = async(req,res)=>{
-    try{
+    
         const {email, code} = req.body
-
+        const numericValues = {"code":code}
         const emailValues = {"email":email}
+        const numericErros = await handlingErrors.validNumericValues(numericValues, [6],[6])
         const emailErros = await handlingErrors.validateEmail(emailValues)
 
-        if(emailErros.length !=0){
-            return res.status(400).send({"erros":emailErros})
+        const erros = numericErros.concat(emailErros)
+
+        if(erros.length != 0){
+            return res.status(400).send({"erros":erros})
         } 
 
         const user = await User.findOne({"email":email})
@@ -156,12 +155,9 @@ exports.verifyCode = async(req,res)=>{
             }
             return res.status(400).send({"message":"Código Inválido!"})
         }
-        return res.status(401).send({"message":"E-mail não existente!"})
+        return res.status(401).send({"message":"Esse e-mail não existe no sistema!"})
         
-
-    }catch(error){
-        return res.status(401).send({"message":error})
-    }
+  
 }
 
 
@@ -176,7 +172,10 @@ exports.login = async(req,res)=>{
             return res.status(400).send({"mensagem":emailErros})
         }
 
-        const exist = await User.findOne({"email":email})
+        const exist = await User.findOne({$and:[
+            {"email":email},
+            {"provisionalRegistration":false}
+        ]})
         
         if(!exist){
 
@@ -189,7 +188,7 @@ exports.login = async(req,res)=>{
        
 
     }catch(error){
-        return res.status(400).send({"mensagem":error})
+        return res.status(400).send({"message":error})
     }
 }
 

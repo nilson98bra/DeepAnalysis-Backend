@@ -3,41 +3,55 @@ const Route = require("../models/route");
 const {v4:uuid} = require("uuid")
 
 exports.cadRoute= async(req,res)=>{
-    const {lt,rt,lb,rb} = req.body
+    try{
+        const {lt,rt,lb,rb} = req.body
     
-    const erros = await handlingErrors.validCoordinates(req.body)
-    if(erros.length){
-        return res.status(400).send({error: erros.join("; ")})
+        const erros = await handlingErrors.validCoordinates(req.body)
+        if(erros.length != 0){
+            return res.status(400).send({"message": erros})
+        }
+    
+        await Route.create({
+            _id: uuid(),
+            coordinateLT: lt,
+            coordinateRT: rt,
+            coordinateLB: lb,
+            coordinateRB: rb,
+            date: new Date().toISOString(),
+            userId:req.user._id   
+        })
+        return res.status(201).send({"message": "Rota Criada"})
+    }catch(error){
+        return res.status(400).send({"message":error})
     }
 
-    await Route.create({
-        _id: uuid(),
-        coordinateLT: lt,
-        coordinateRT: rt,
-        coordinateLB: lb,
-        coordinateRB: rb,
-        date: new Date().toISOString()
-
-       
-    })
-    return res.status(201).send({"message": "Rota Criada"})
 }
 
 exports.getRoute = async(req,res)=>{
-    const {_id} = req.body
-    const erros = await handlingErrors.handling(req.body,[36],[36])
-    if(erros.length){
-        return res.status(400).send({error: erros.join("; ")})
+    try{
+        const {_id} = req.body
+        const stringErros = await handlingErros.validateString(req.body,[36],[36])
+        if(stringErros.length != 0){
+            return res.status(400).send({"erros": stringErros})
+        }
+        const rota = await Route.findOne({"_id":_id})
+        return res.status(200).send({"data":rota})
+    }catch(error){
+        return res.status(400).send({"message":error})
     }
-    const rota = await Route.findOne({"_id":_id})
-    return res.status(200).send({"message":rota})
+
 }
 
 
 exports.getAllRoutes = async(req,res)=>{
     
-    const rotas = await Route.find({})
-    return res.status(200).send({"data":rotas})
+    try{
+        const rotas = await Route.find({"userId": req.user._id})
+        return res.status(200).send({"data":rotas})
+    }catch(error){
+        return res.status(400).send({"message":error})
+    }
+
 }
 
 

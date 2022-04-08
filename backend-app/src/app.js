@@ -1,6 +1,5 @@
 const express = require("express")
 const app = express()
-const mongoose = require("./database/mongodb")
 
 const userRouter = require("./routes/userRoute")
 const deepRouter = require("./routes/deepRoute")

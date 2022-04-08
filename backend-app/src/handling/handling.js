@@ -37,23 +37,24 @@ exports.validPhoneNumber = (phone)=>{
 }
 
 exports.validateEmail = (_email)=>{
+
   let email = _email.email
   const erros = []
-  var regex = /\S+@\S+\.\S+/;
+  const res = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if(email.length > 40){
     erros.push("O e-mail não pode ter mais que 40 caracteres")
   }
   if(email.length < 16){
     erros.push("O e-mail não pode ter menos que 16 caracteres")
   }
-  if(regex.test(email)==false){
-    erros.push("O e-mail deve conter os caracteres '@' e '.'")
+  if(res.test(String(email).toLowerCase())==false){
+    erros.push("Insira um e-mail válido")
   }
   return erros;
 }
 
 exports.validNumericValues = (args,maxs=[],mins=[])=>{
-  
+
   let erros = Object.keys(args).map((key,index)=>{
     const listErros = []
      if(!args[key]){
@@ -61,20 +62,24 @@ exports.validNumericValues = (args,maxs=[],mins=[])=>{
          listErros.push(`Campo '${key}' não pode ser vazio!`)
      }
      else{
-      if(!!isNaN(args[key])){
+        if(!!isNaN(args[key])){
 
-        listErros.push(`Campo '${key}' deve ser numérico!`)
-  
-       }
-       if(args[key] > maxs[index]){
+          listErros.push(`Campo '${key}' deve ser numérico!`)
     
-        listErros.push(`Campo '${key}' deve ter menos que ${maxs[index]} caracteres!`)
-       }
-       if (args[key] < mins[index]){
-  
-        listErros.push(`Campo '${key}' deve ter mais que ${mins[index]} caracteres!`)
-  
-       }
+        }
+        console.log(args[key])
+        if(args[key] != maxs[index] && maxs[index] == mins[index]){
+            listErros.push(`Campo '${key}' deve ter exatamente ${maxs[index]} caracteres!`)
+        }
+        if(args[key] > maxs[index]){
+      
+          listErros.push(`Campo '${key}' deve ter menos que ${maxs[index]} caracteres!`)
+        }
+        if (args[key] < mins[index]){
+    
+          listErros.push(`Campo '${key}' deve ter mais que ${mins[index]} caracteres!`)
+    
+        }
      }
 
      return listErros.length == 0? null : listErros

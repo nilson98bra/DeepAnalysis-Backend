@@ -32,15 +32,20 @@ exports.insertDeep = async (req,res)=>{
 }
 
 exports.selectDeeps = async (req,res)=>{
-  
-        const {idRoute} = req.body
-        const stringErros = await handlingErros.validateString(req.body,[36],[36])
-        
-        if(stringErros){
-            return res.status(400).send({"erros": stringErros})
+    
+        try{
+            const {idRoute} = req.body
+            const stringErros = await handlingErros.validateString(req.body,[36],[36])
+            
+            if(stringErros.length != 0){
+                return res.status(400).send({"erros": stringErros})
+            }
+    
+            const deeps = await Deep.find({"idRoute":idRoute})
+            return res.status(200).send({"data": deeps})
+        }catch(error){
+            return res.status(400).send({"message":error})
         }
 
-        const deeps = await Deep.find({"idRoute":idRoute})
-        return res.status(200).send({"Data": deeps})
 
 }
