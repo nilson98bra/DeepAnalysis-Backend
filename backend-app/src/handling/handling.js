@@ -67,19 +67,18 @@ exports.validNumericValues = (args,maxs=[],mins=[])=>{
           listErros.push(`Campo '${key}' deve ser numérico!`)
     
         }
-        console.log(args[key])
-        if(args[key] != maxs[index] && maxs[index] == mins[index]){
+
+        if(String(args[key]).length != maxs[index] && maxs[index] == mins[index]){
             listErros.push(`Campo '${key}' deve ter exatamente ${maxs[index]} caracteres!`)
         }
-        if(args[key] > maxs[index]){
-      
-          listErros.push(`Campo '${key}' deve ter menos que ${maxs[index]} caracteres!`)
-        }
-        if (args[key] < mins[index]){
-    
-          listErros.push(`Campo '${key}' deve ter mais que ${mins[index]} caracteres!`)
-    
-        }
+        if(maxs[index]!=mins[index]){
+          if( String(args[key]).length > maxs[index]){   
+              listErros.push(`Campo '${key}' deve ter menos que ${maxs[index]} caracteres!`)
+          }
+          if (String(args[key]).length < mins[index]){
+            listErros.push(`Campo '${key}' deve ter mais que ${mins[index]} caracteres!`)
+          }
+       }
      }
 
      return listErros.length == 0? null : listErros

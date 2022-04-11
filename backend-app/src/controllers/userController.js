@@ -132,11 +132,12 @@ exports.verifyCode = async(req,res)=>{
             let now = moment(new Date())
             const duration = moment.duration(now.diff(user.verifyCodeDate));
      
-            if(duration.asMinutes()>8){
-                return res.status(400).send({"erro":"Código Expirado"})
-            }
-
+            console.log(user.verifyCode)
             if(user.verifyCode == code){
+
+                if(duration.asMinutes()>8){
+                    return res.status(403).send({"erro":"Código Expirado!"})
+                }
 
                 const existProvisional = await User.findOne({"email":email},{"provisionalRegistration":true})
         
@@ -149,11 +150,17 @@ exports.verifyCode = async(req,res)=>{
                 },process.env.JWT_KEY,{
                     expiresIn: "10h"
                 })
+                const refreshToken = jwt.sign({
+                    _id: user._id,
+                    email: email
+                },process.env.JWT_REFRESH_KEY,{
+                    expiresIn: "100h"
+                })
 
                
-                return res.status(200).send({"token":token})
+                return res.status(200).send({"token":token, "refreshToken":refreshToken})
             }
-            return res.status(400).send({"message":"Código Inválido!"})
+            return res.status(401).send({"message":"Código Inválido!"})
         }
         return res.status(401).send({"message":"Esse e-mail não existe no sistema!"})
         
@@ -163,7 +170,6 @@ exports.verifyCode = async(req,res)=>{
 
 exports.login = async(req,res)=>{
     try{
-
         const {email} = req.body
         const emailValues = {"email":email}
         const emailErros = await handlingErrors.validateEmail(emailValues)
@@ -172,21 +178,20 @@ exports.login = async(req,res)=>{
             return res.status(400).send({"mensagem":emailErros})
         }
 
-        const exist = await User.findOne({$and:[
+        const verifyCode = generateCode(100000,999999)
+        const user = await User.findOneAndUpdate({$and:[
             {"email":email},
             {"provisionalRegistration":false}
-        ]})
-        
-        if(!exist){
-
+        ]},{verifyCode: verifyCode, verifyCodeDate:new Date().toISOString()},{new: true})
+    
+        if(!user){
             return res.status(401).send({"error": "E-mail não encontrado"})    
         }
-        const verifyCode = generateCode(100000,999999)
         await sendEmail(verifyCode,email)
+            
+        return res.status(200).send({"message":true,
+        "e-mail":"E-mail com o código de verificação enviado com sucesso!"})  
         
-        return res.status(200).send({"message":true})  
-       
-
     }catch(error){
         return res.status(400).send({"message":error})
     }
