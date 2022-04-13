@@ -23,6 +23,8 @@ const sendEmail = async function(code,destinatary){
         from: `Deep Analysis <${process.env.GMAIL_USER}`,
         to: destinatary
     })
+
+   
 }
 
 module.exports = sendEmail

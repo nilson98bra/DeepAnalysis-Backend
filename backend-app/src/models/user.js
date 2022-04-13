@@ -13,18 +13,24 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: true, 
     },
+    phone:{
+        type: String,
+        required: true, 
+    },
     notifyInitBathymetry:{
         type: Boolean,
-        required: true
        
+           
     },
     notifyEndBathymetry:{
         type: Boolean,
-        required: true
+     
+       
     },
     notifyObstacle:{
         type: Boolean,   
-        required: true   
+       
+           
     },
     verifyCode:{
         type:String,
@@ -32,6 +38,14 @@ const UserSchema = mongoose.Schema({
     },
     verifyCodeDate:{
         type: Date,
+        required: true
+    },
+    tokenUser:{
+        type:String,
+        required: true
+    },
+    refreshTokenUser:{
+        type:String,
         required: true
     },
     provisionalRegistration:{

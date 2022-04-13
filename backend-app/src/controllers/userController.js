@@ -13,7 +13,7 @@ function generateCode(min, max){
 }
 
 exports.cadUserEmail= async(req,res)=>{
-    try{
+    
         const {email} = req.body
         const emailValues = {"email":email}
         const emailErros = await handlingErrors.validateEmail(emailValues)
@@ -41,16 +41,20 @@ exports.cadUserEmail= async(req,res)=>{
             await User.findOneAndUpdate({email:email},{verifyCode: verifyCode, verifyCodeDate:new Date().toISOString()})
         }
         else{
+
             await User.create({ 
                 _id: uuid(),
                 email: email,
+                phone: "Default",
                 nameUser: "Default",
                 notifyInitBathymetry:false,
                 notifyEndBathymetry:false,
                 notifyObstacle:false,
                 verifyCode: verifyCode,
                 verifyCodeDate: new Date().toISOString(),
-                provisionalRegistration:true
+                tokenUser: "Default",
+                refreshTokenUser: "Default",
+                provisionalRegistration:true,
             })
         }
 
@@ -58,9 +62,7 @@ exports.cadUserEmail= async(req,res)=>{
 
         return res.status(201).send({"message":"Código de verificação enviado"})  
    
-    }catch(error){
-        return res.status(400).send({"mensagem":error})
-    }
+  
     
 }
 
@@ -75,7 +77,6 @@ exports.sendEmail = async(req,res)=>{
     }
 
     const verifyCode = generateCode(100000,999999)
-
     
     const user = await User.findOneAndUpdate({email:email},{verifyCode: verifyCode, verifyCodeDate:new Date().toISOString()},{new: true})
     
@@ -89,22 +90,35 @@ exports.sendEmail = async(req,res)=>{
 
 }
 
-exports.cadUserEspec= async(req,res)=>{
-
-    const {nameUser, notifyInitBathymetry, notifyEndBathymetry, notifyObstacle} = req.body
-    
+exports.updateNameAndPhone = async(req,res)=>{
+    const {nameUser, phone} = req.body
     const stringValues = {"nameUser":nameUser}
-    const booleanValues = {"notifyInitBathymetry":notifyInitBathymetry,
-    "notifyEndBathymetry":notifyEndBathymetry,"notifyObstacle":notifyObstacle}
-    const stringErros = await handlingErros.validateString(stringValues, [15,36],[4,36])
-    const booleanErros = await handlingErrors.validBooleanValues(booleanValues)
+    const phoneValues = {"phone":phone}
+    const stringErros = await  handlingErrors.validateString(stringValues, [15],[4])
+    const phoneErros = await handlingErrors.validatePhoneNumber(phoneValues)
 
-    const erros = stringErros.concat(booleanErros)
-    if(erros){
+    const erros = stringErros.concat(phoneErros)
+    
+    if(erros.length != 0){
         return res.status(400).send({"mensagem":erros})
     }
 
-    await User.findByIdAndUpdate({_id:req.user._id},{nameUser:nameUser, 
+    await User.findByIdAndUpdate({_id:req.user._id},{nameUser:nameUser, phone:phone})
+    return res.status(201).send({"message": "Nome e Telefone atualizados"})
+}
+
+exports.cadUserEspec= async(req,res)=>{
+
+    const {notifyInitBathymetry, notifyEndBathymetry, notifyObstacle} = req.body  
+    const booleanValues = {"notifyInitBathymetry":notifyInitBathymetry,
+    "notifyEndBathymetry":notifyEndBathymetry,"notifyObstacle":notifyObstacle}
+    const booleanErros = await handlingErrors.validateBooleanValues(booleanValues)
+
+    if(booleanErros.length != 0){
+        return res.status(400).send({"mensagem":booleanErros})
+    }
+
+    await User.findByIdAndUpdate({_id:req.user._id},{ 
         notifyInitBathymetry: notifyInitBathymetry,notifyEndBathymetry:  notifyEndBathymetry,
         notifyObstacle: notifyObstacle})
 
@@ -114,36 +128,35 @@ exports.cadUserEspec= async(req,res)=>{
 
 exports.verifyCode = async(req,res)=>{
     
-        const {email, code} = req.body
-        const numericValues = {"code":code}
-        const emailValues = {"email":email}
-        const numericErros = await handlingErrors.validNumericValues(numericValues, [6],[6])
-        const emailErros = await handlingErrors.validateEmail(emailValues)
+    const {email, code} = req.body
+    const numericValues = {"code":code}
+    const emailValues = {"email":email}
+    const numericErros = await handlingErrors.validateNumericValues(numericValues, [6],[6])
+    const emailErros = await handlingErrors.validateEmail(emailValues)
 
-        const erros = numericErros.concat(emailErros)
+    const erros = numericErros.concat(emailErros)
 
-        if(erros.length != 0){
-            return res.status(400).send({"erros":erros})
-        } 
+    if(erros.length != 0){
+        return res.status(400).send({"erros":erros})
+    } 
 
-        const user = await User.findOne({"email":email})
-        if(user){
-        
-            let now = moment(new Date())
-            const duration = moment.duration(now.diff(user.verifyCodeDate));
-     
-            console.log(user.verifyCode)
-            if(user.verifyCode == code){
+    const user = await User.findOne({"email":email})
+    if(user){
+    
+        let now = moment(new Date())
+        const duration = moment.duration(now.diff(user.verifyCodeDate));
 
-                if(duration.asMinutes()>8){
-                    return res.status(403).send({"erro":"Código Expirado!"})
-                }
+        if(user.verifyCode == code){
 
-                const existProvisional = await User.findOne({"email":email},{"provisionalRegistration":true})
-        
-                if(existProvisional){
-                    await User.findOneAndUpdate({email:email},{provisionalRegistration:false})
-                }
+            if(duration.asMinutes()>8){
+                return res.status(403).send({"erro":"Código Expirado!"})
+            }
+
+            const existProvisional = await User.findOne({"email":email},{"provisionalRegistration":true})
+    
+            if(existProvisional){
+                await User.findOneAndUpdate({email:email},{provisionalRegistration:false})
+
                 const token = jwt.sign({
                     _id: user._id,
                     email: email
@@ -156,13 +169,17 @@ exports.verifyCode = async(req,res)=>{
                 },process.env.JWT_REFRESH_KEY,{
                     expiresIn: "100h"
                 })
+                
+                await User.findOneAndUpdate({email:email},{tokenUser:token, refreshTokenUser:refreshToken})
 
-               
                 return res.status(200).send({"token":token, "refreshToken":refreshToken})
+
             }
-            return res.status(401).send({"message":"Código Inválido!"})
+            
         }
-        return res.status(401).send({"message":"Esse e-mail não existe no sistema!"})
+        return res.status(401).send({"message":"Código Inválido!"})
+    }
+    return res.status(401).send({"message":"Esse e-mail não existe no sistema!"})
         
   
 }
@@ -197,7 +214,33 @@ exports.login = async(req,res)=>{
     }
 }
 
+exports.refreshToken = async(req,res)=>{
+  
+    const {refreshToken} = req.body;
+    if(refreshToken.trim().length == 0){
+        return res.status(400).send({"message":"Refresh Token está vazio!"})
+    }
+    try{   
+        jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY)
+        const user = await User.findOne({refreshTokenUser:refreshToken})
+        const token = jwt.sign({
+            _id: user._id,
+            email: user.email
+        },process.env.JWT_KEY,{
+            expiresIn: "10h"
+        })
+    
+    await User.findOneAndUpdate({refreshTokenUser:refreshToken},{tokenUser: token})
+    return res.status(200).send({"token":token, "refreshToken":refreshToken})
+       
+    }catch(err){
+        console.log(err)
+        res.status(403).send({"error": "Não autorizado! O refresh token foi expirado!"});
+        
+    }
 
+    
+}
 
 
 

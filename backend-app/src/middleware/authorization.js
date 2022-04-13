@@ -9,7 +9,8 @@ module.exports = (req,res,next)=>{
         req.user = decodedToken
         next()
     }catch(err){
-        res.status(403).send({"error": "Não autorizado! O token foi expirado."})
+        console.log(err)
+        res.status(403).send({"error": "O token foi expirado! Por Favor, gere um novo token."})
         
     } 
 }

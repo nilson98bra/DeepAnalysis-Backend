@@ -6,8 +6,8 @@ exports.cadRoute= async(req,res)=>{
     try{
         const {lt,rt,lb,rb} = req.body
     
-        const erros = await handlingErrors.validCoordinates(req.body)
-        if(erros.length != 0){
+        const erros = await handlingErrors.validateCoordinates(req.body)
+        if(erros.length > 0){
             return res.status(400).send({"message": erros})
         }
     
@@ -21,8 +21,8 @@ exports.cadRoute= async(req,res)=>{
             userId:req.user._id   
         })
         return res.status(201).send({"message": "Rota Criada"})
-    }catch(error){
-        return res.status(400).send({"message":error})
+    }catch(err){
+        return res.status(400).send({"message":err})
     }
 
 }
