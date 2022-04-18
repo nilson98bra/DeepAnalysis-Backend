@@ -77,11 +77,11 @@ exports.validateNumericValues = (args,maxs=[],mins=[])=>{
             listErros.push(`Campo '${key}' deve ter exatamente ${maxs[index]} caracteres!`)
         }
         if(maxs[index]!=mins[index]){
-          if( String(args[key]).length > maxs[index]){   
-              listErros.push(`Campo '${key}' deve ter menos que ${maxs[index]} caracteres!`)
+          if( args[key] > maxs[index]){   
+              listErros.push(`Campo '${key}' deve ser menor que ${maxs[index]}.`)
           }
-          if (String(args[key]).length < mins[index]){
-            listErros.push(`Campo '${key}' deve ter mais que ${mins[index]} caracteres!`)
+          if (args[key] < mins[index]){
+            listErros.push(`Campo '${key}' deve ser maior que ${mins[index]}.`)
           }
        }
      }
@@ -120,36 +120,42 @@ exports.validateCoordinates = (args) =>{
       listErros.push(`Campo '${campoAtual}' não pode ser vazia!`)
     }
     else{
-      if(!args[key].coordinates[0]){
-        listErros.push(`Latitude do campo '${campoAtual}' não pode ser vazia!`)
+      if(args[key].coordinates.length != 2){
+        listErros.push(`Latitude e longitude do campo '${campoAtual}' devem ser inseridas!`)
       }
-      if(!args[key].coordinates[1]){
-        listErros.push(`Longitude do campo '${campoAtual}' não pode ser vazia!`)
-      }
+      
       else{
-        if(isNaN(args[key].coordinates[0])){
-          listErros.push(`Latitude do campo '${campoAtual}' deve ser numérica!`)
+          if(!args[key].coordinates[0]){
+            listErros.push(`Latitude do campo '${campoAtual}' não pode ser vazia!`)
+          }
+          if(!args[key].coordinates[1]){
+            listErros.push(`Longitude do campo '${campoAtual}' não pode ser vazia!`)
+          }
+          else{
+            if(isNaN(args[key].coordinates[0])){
+              listErros.push(`Latitude do campo '${campoAtual}' deve ser numérica!`)
+            }
+            if(isNaN(args[key].coordinates[1])){
+              listErros.push(`Longitude do campo '${campoAtual}' deve ser numérica!`)
+            }
+        
+            if(args[key].coordinates[0] > 90 || args[key].coordinates[0] < -90){
+              listErros.push(`Latitude do campo '${campoAtual}' deve estar no intervalode 90 a -90!`)
+            }
+            if(args[key].coordinates[1] > 180 || args[key].coordinates[1] < -180){
+              listErros.push(`Longitude do campo '${campoAtual}' deve estar no intervalo de 180 a -180!`)
+            }
+        
+            if(String(args[key].coordinates[0]).split(".")[1].length < 4){
+        
+              listErros.push(`Deve ter no mínimo 5 casas decimais na latitude do campo '${campoAtual}'!`)
+            }
+            if(String(args[key].coordinates[1]).split(".")[1].length < 4){
+              listErros.push(`Deve ter no mínimo 5 casas decimais na longitude do campo '${campoAtual}'!`)
+            }
+          }
         }
-        if(isNaN(args[key].coordinates[1])){
-          listErros.push(`Longitude do campo '${campoAtual}' deve ser numérica!`)
-        }
-    
-        if(args[key].coordinates[0] > 90 || args[key].coordinates[0] < -90){
-          listErros.push(`Latitude do campo '${campoAtual}' deve estar no intervalode 90 a -90!`)
-        }
-        if(args[key].coordinates[1] > 180 || args[key].coordinates[1] < -180){
-          listErros.push(`Longitude do campo '${campoAtual}' deve estar no intervalo de 180 a -180!`)
-        }
-    
-        if(String(args[key].coordinates[0]).split(".")[1].length < 4){
-     
-          listErros.push(`Deve ter no mínimo 5 casas decimais na latitude do campo '${campoAtual}'!`)
-        }
-        if(String(args[key].coordinates[1]).split(".")[1].length < 4){
-          listErros.push(`Deve ter no mínimo 5 casas decimais na longitude do campo '${campoAtual}'!`)
-        }
-      }
-    }
+  }
   
 
 

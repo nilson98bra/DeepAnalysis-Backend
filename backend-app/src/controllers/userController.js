@@ -13,7 +13,7 @@ function generateCode(min, max){
 }
 
 exports.cadUserEmail= async(req,res)=>{
-    
+    try{
         const {email} = req.body
         const emailValues = {"email":email}
         const emailErros = await handlingErrors.validateEmail(emailValues)
@@ -60,7 +60,12 @@ exports.cadUserEmail= async(req,res)=>{
 
         await sendEmail(verifyCode,email)
 
-        return res.status(201).send({"message":"Código de verificação enviado"})  
+        return res.status(201).send({"message":"Código de verificação enviado"}) 
+    }
+    catch(err){
+        return res.status(400).send({"message":err})
+    }
+ 
    
   
     
@@ -86,29 +91,35 @@ exports.sendEmail = async(req,res)=>{
         return res.status(200).send({"message":"E-mail com o código de verificação enviado com sucesso!"})  
     }
 
-    return res.status(401).send({"message":"E-mail não encontrado!"})  
+    return res.status(404).send({"message":"E-mail não encontrado!"})  
 
 }
 
 exports.updateNameAndPhone = async(req,res)=>{
-    const {nameUser, phone} = req.body
-    const stringValues = {"nameUser":nameUser}
-    const phoneValues = {"phone":phone}
-    const stringErros = await  handlingErrors.validateString(stringValues, [15],[4])
-    const phoneErros = await handlingErrors.validatePhoneNumber(phoneValues)
-
-    const erros = stringErros.concat(phoneErros)
+    try{
+        const {nameUser, phone} = req.body
+        const stringValues = {"nameUser":nameUser}
+        const phoneValues = {"phone":phone}
+        const stringErros = await  handlingErrors.validateString(stringValues, [15],[4])
+        const phoneErros = await handlingErrors.validatePhoneNumber(phoneValues)
     
-    if(erros.length != 0){
-        return res.status(400).send({"mensagem":erros})
+        const erros = stringErros.concat(phoneErros)
+        
+        if(erros.length != 0){
+            return res.status(400).send({"mensagem":erros})
+        }
+    
+        await User.findByIdAndUpdate({_id:req.user._id},{nameUser:nameUser, phone:phone})
+        return res.status(201).send({"message": "Nome e Telefone atualizados"})
+    }catch(err){
+        return res.status(400).send({"message":err})
     }
 
-    await User.findByIdAndUpdate({_id:req.user._id},{nameUser:nameUser, phone:phone})
-    return res.status(201).send({"message": "Nome e Telefone atualizados"})
 }
 
 exports.cadUserEspec= async(req,res)=>{
-
+    try{
+        
     const {notifyInitBathymetry, notifyEndBathymetry, notifyObstacle} = req.body  
     const booleanValues = {"notifyInitBathymetry":notifyInitBathymetry,
     "notifyEndBathymetry":notifyEndBathymetry,"notifyObstacle":notifyObstacle}
@@ -123,12 +134,18 @@ exports.cadUserEspec= async(req,res)=>{
         notifyObstacle: notifyObstacle})
 
     return res.status(201).send({"message": "Detalhes Atualizados"})
+    }
+    catch(err){
+        return res.status(400).send({"message":err})
+    }
+
 
 }
 
 exports.verifyCode = async(req,res)=>{
     
-    const {email, code} = req.body
+    try{
+        const {email, code} = req.body
     const numericValues = {"code":code}
     const emailValues = {"email":email}
     const numericErros = await handlingErrors.validateNumericValues(numericValues, [6],[6])
@@ -161,13 +178,13 @@ exports.verifyCode = async(req,res)=>{
                     _id: user._id,
                     email: email
                 },process.env.JWT_KEY,{
-                    expiresIn: "10h"
+                    expiresIn: "7d"
                 })
                 const refreshToken = jwt.sign({
                     _id: user._id,
                     email: email
                 },process.env.JWT_REFRESH_KEY,{
-                    expiresIn: "100h"
+                    expiresIn: "30d"
                 })
                 
                 await User.findOneAndUpdate({email:email},{tokenUser:token, refreshTokenUser:refreshToken})
@@ -180,8 +197,11 @@ exports.verifyCode = async(req,res)=>{
         return res.status(401).send({"message":"Código Inválido!"})
     }
     return res.status(401).send({"message":"Esse e-mail não existe no sistema!"})
-        
-  
+    }catch(err){
+        return res.status(400).send({"message":err})
+    }
+    
+    
 }
 
 
@@ -206,38 +226,44 @@ exports.login = async(req,res)=>{
         }
         await sendEmail(verifyCode,email)
             
-        return res.status(200).send({"message":true,
-        "e-mail":"E-mail com o código de verificação enviado com sucesso!"})  
+        return res.status(200).send({
+        "message":"E-mail com o código de verificação enviado com sucesso!"})  
         
-    }catch(error){
-        return res.status(400).send({"message":error})
+    }catch(err){
+        return res.status(400).send({"message":err})
     }
 }
 
 exports.refreshToken = async(req,res)=>{
-  
-    const {refreshToken} = req.body;
-    if(refreshToken.trim().length == 0){
-        return res.status(400).send({"message":"Refresh Token está vazio!"})
-    }
-    try{   
-        jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY)
-        const user = await User.findOne({refreshTokenUser:refreshToken})
-        const token = jwt.sign({
-            _id: user._id,
-            email: user.email
-        },process.env.JWT_KEY,{
-            expiresIn: "10h"
-        })
-    
-    await User.findOneAndUpdate({refreshTokenUser:refreshToken},{tokenUser: token})
-    return res.status(200).send({"token":token, "refreshToken":refreshToken})
-       
+    try{
+        const {refreshToken} = req.body;
+        if(refreshToken.trim().length == 0){
+            return res.status(400).send({"message":"Refresh Token está vazio!"})
+        }
+        try{   
+            jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY)
+            const user = await User.findOne({refreshTokenUser:refreshToken})
+            const token = jwt.sign({
+                _id: user._id,
+                email: user.email
+            },process.env.JWT_KEY,{
+                expiresIn: "7d"
+            })
+        
+        await User.findOneAndUpdate({refreshTokenUser:refreshToken},{tokenUser: token})
+        return res.status(200).send({"token":token, "refreshToken":refreshToken})
+           
+        }catch(err){
+           
+            res.status(403).send({"error": "Não autorizado! O refresh token foi expirado!"});
+            
+        }
     }catch(err){
-        console.log(err)
-        res.status(403).send({"error": "Não autorizado! O refresh token foi expirado!"});
+       
+        res.status(403).send({"error": err});
         
     }
+    
 
     
 }

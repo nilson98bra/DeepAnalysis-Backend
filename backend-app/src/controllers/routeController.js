@@ -29,15 +29,15 @@ exports.cadRoute= async(req,res)=>{
 
 exports.getRoute = async(req,res)=>{
     try{
-        const {_id} = req.body
-        const stringErros = await handlingErros.validateString(req.body,[36],[36])
+        const {_id} = req.params
+        const stringErros = await handlingErrors.validateString(req.params,[36],[36])
         if(stringErros.length != 0){
             return res.status(400).send({"erros": stringErros})
         }
         const rota = await Route.findOne({"_id":_id})
         return res.status(200).send({"data":rota})
-    }catch(error){
-        return res.status(400).send({"message":error})
+    }catch(err){
+        return res.status(400).send({"message":err})
     }
 
 }
