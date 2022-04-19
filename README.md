@@ -21,7 +21,7 @@ _Response 201_
 
 ```javascript
 {
-  "message":"Código de verificação enviado"
+  "message":"Código de verificação enviado."
 }
 
 ```
@@ -43,7 +43,7 @@ _Response 200_
 
 ```javascript
 {
-  "message":"Código de verificação enviado"
+  "message":"Código de verificação enviado."
 }
 
 ```
@@ -89,7 +89,7 @@ _Response 200_
 
 ```javascript
 {
-  "message":"Código de verificação enviado"
+  "message":"Código de verificação enviado."
 }
 
 ```
@@ -167,7 +167,7 @@ _Response 200_
 
 ### Route
 
-#### Cadastrar Rota
+#### Cadastrar rota
 
 - POST: /route/cadRoute
 
@@ -334,7 +334,7 @@ _Response 200_
 
 ### Deep
 
-#### Cadastrar Profundidade
+#### Cadastrar profundidade
 
 - POST: /deep/cadDeep
 
