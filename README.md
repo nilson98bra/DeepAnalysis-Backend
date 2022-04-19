@@ -4,7 +4,7 @@
 
 ### User
 
-#### Cadastro do E-mail
+#### Cadastro do e-mail
 
 - POST: /user/cadEmail/
 
@@ -12,7 +12,16 @@ _Body_
 
 ```javascript
 {
-  "email": "nilson@nilson.com"
+  "email": "teste.00@hotmail.com"
+}
+
+```
+
+_Response 201_
+
+```javascript
+{
+  "message":"Código de verificação enviado"
 }
 
 ```
@@ -25,12 +34,12 @@ _Body_
 
 ```javascript
 {
-  "email": "nilson@nilson.com"
+  "email": "teste.00@hotmail.com"
 }
 
 ```
 
-#### Verificação de Código
+#### Checagem de código de verificação
 
 - POST: /user/verifyCode
 
@@ -38,13 +47,13 @@ _Body_
 
 ```javascript
 {
-  "email": "nilson@nilson.com",
+  "email": "teste.00@hotmail.com",
   "code": "146987"
 }
 
 ```
 
-#### Refresh Token
+#### Refresh token
 
 - POST: /user/auth/refreshToken
 
