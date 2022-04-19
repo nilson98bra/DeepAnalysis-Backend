@@ -3,7 +3,7 @@ const userControllers = require("../controllers/userController")
 const authorization = require("../middleware/authorization")
 
 router.post("/cadEmail",userControllers.cadUserEmail);
-router.post("/sendEmail",userControllers.sendEmail)
+router.post("/sendVerifCode",userControllers.sendEmail)
 router.post("/verifyCode",userControllers.verifyCode);
 router.post("/login",userControllers.login);
 router.post("/auth/refreshToken",userControllers.refreshToken)
