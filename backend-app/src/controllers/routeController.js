@@ -20,7 +20,7 @@ exports.cadRoute= async(req,res)=>{
             date: new Date().toISOString(),
             userId:req.user._id   
         })
-        return res.status(201).send({"message": "Rota Criada"})
+        return res.status(201).send({"message": "Rota criada."})
     }catch(err){
         return res.status(400).send({"message":err})
     }

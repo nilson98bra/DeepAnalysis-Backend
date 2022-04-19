@@ -30,7 +30,7 @@ exports.cadUserEmail= async(req,res)=>{
       
         if(exist){
 
-            return res.status(400).send({"error": "Este email já está cadastrado"})    
+            return res.status(400).send({"error": "Este email já está cadastrado."})    
         }
 
         const verifyCode = generateCode(100000,999999)
@@ -60,7 +60,7 @@ exports.cadUserEmail= async(req,res)=>{
 
         await sendEmail(verifyCode,email)
 
-        return res.status(201).send({"message":"Código de verificação enviado"}) 
+        return res.status(201).send({"message":"Código de verificação enviado."}) 
     }
     catch(err){
         return res.status(400).send({"message":err})
@@ -88,7 +88,7 @@ exports.sendEmail = async(req,res)=>{
     if(user){
         await sendEmail(verifyCode,email)
         
-        return res.status(200).send({"message":"E-mail com o código de verificação enviado com sucesso!"})  
+        return res.status(200).send({"message":"Código de verificação enviado."})  
     }
 
     return res.status(404).send({"message":"E-mail não encontrado!"})  
@@ -110,7 +110,7 @@ exports.updateNameAndPhone = async(req,res)=>{
         }
     
         await User.findByIdAndUpdate({_id:req.user._id},{nameUser:nameUser, phone:phone})
-        return res.status(201).send({"message": "Nome e Telefone atualizados"})
+        return res.status(200).send({"message": "Nome e telefone atualizados."})
     }catch(err){
         return res.status(400).send({"message":err})
     }
@@ -133,7 +133,7 @@ exports.cadUserEspec= async(req,res)=>{
         notifyInitBathymetry: notifyInitBathymetry,notifyEndBathymetry:  notifyEndBathymetry,
         notifyObstacle: notifyObstacle})
 
-    return res.status(201).send({"message": "Detalhes Atualizados"})
+    return res.status(201).send({"message": "Preferências Atualizadas."})
     }
     catch(err){
         return res.status(400).send({"message":err})
@@ -227,7 +227,7 @@ exports.login = async(req,res)=>{
         await sendEmail(verifyCode,email)
             
         return res.status(200).send({
-        "message":"E-mail com o código de verificação enviado com sucesso!"})  
+        "message":"Código de verificação enviado"})  
         
     }catch(err){
         return res.status(400).send({"message":err})

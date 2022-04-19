@@ -20,7 +20,7 @@ exports.insertDeep = async (req,res)=>{
 
     const route = await Route.findOne({_id: idRoute})
     if(!route){
-        return res.status(404).send({"error": "Rota não cadastrada"})
+        return res.status(404).send({"error": "Rota da embarcação não cadastrada."})
     }
     await Deep.create({
         _id: uuid(),
@@ -28,7 +28,7 @@ exports.insertDeep = async (req,res)=>{
         value: value,
         idRoute: idRoute
     })
-    return res.status(201).send({"message": "Profundidade Cadastrada"})
+    return res.status(201).send({"message": "Profundidade cadastrada."})
 }
 
 exports.selectDeeps = async (req,res)=>{
