@@ -22,7 +22,7 @@ const DeepSchema = mongoose.Schema({
         required: true
     },
 
-    idRoute:{
+    idBathy:{
         type: String,
         required: true
     }

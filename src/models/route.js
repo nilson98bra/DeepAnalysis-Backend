@@ -57,6 +57,10 @@ const RouteSchema = mongoose.Schema({
       type: Date,
       required: true
     },
+    name:{
+      type: String,
+      required: true
+    },
     userId:{
       type: String,
       required: true

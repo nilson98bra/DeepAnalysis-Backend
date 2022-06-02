@@ -190,7 +190,8 @@ _Body_
     "rb":{
         "type":"Point",
         "coordinates":[-46.332200, -53.961822]
-        }
+        },
+    "name":"Teste"
 }
 
 ```
@@ -245,6 +246,7 @@ _Response 200_
         },
         "_id": "552a0c63-c62f-4813-a72e-b204d737d703",
         "date": "2022-04-18T02:12:41.598Z",
+        "name": "Teste",
         "userId": "a1cbbfa9-372e-436c-8c67-52e63054e677"
     }
 }
@@ -292,6 +294,7 @@ _Response 200_
             },
             "_id": "552a0c63-c62f-4813-a72e-b204d737d703",
             "date": "2022-04-18T02:12:41.598Z",
+            "name": "Teste",
             "userId": "a1cbbfa9-372e-436c-8c67-52e63054e677"
         },
         {
@@ -325,6 +328,7 @@ _Response 200_
             },
             "_id": "5fb0d6d0-dfde-4044-8972-8dd169ce6857",
             "date": "2022-04-19T18:49:44.368Z",
+            "name": "Teste2",
             "userId": "a1cbbfa9-372e-436c-8c67-52e63054e677"
         }
     ]
@@ -363,7 +367,7 @@ _Response 201_
  
 #### Selecionar todas as profundidades da rota
 
-- GET: /route/:_idRoute
+- GET: /deep/getDeeps/:_idRoute
 
 _Response 200_
 
@@ -380,9 +384,76 @@ _Response 200_
             },
             "_id": "4becfcd0-74da-4a26-9e10-ceb3c16ae8cc",
             "value": 1000,
+            "name":"Teste",
             "idRoute": "552a0c63-c62f-4813-a72e-b204d737d703"
         }
     ]
+}
+
+```
+
+### Bathymetry
+
+#### Cadastrar Batimetria
+
+- POST: /bathymetry/cadBathy
+
+_Body_
+
+```javascript
+{
+    "idRoute": "a32cc903-9e43-4827-b061-ef69377bd6b2"
+}
+
+```
+
+_Response 201_
+
+```javascript
+{
+    "message": {
+        "_id": "0075cc37-7ce7-4b23-b95f-d30155c2ea0a",
+        "dateInit": "2022-05-30T02:28:08.656Z",
+        "idRoute": "165d1c34-2bed-4207-a298-48334a0b7dd0"
+    }
+}
+
+```
+#### Selecionar a batimetria especifica
+- GET: /bathymetry/getBathy/:id
+
+_Response 200_
+
+```javascript
+{
+    "data": {
+        "_id": "0ef33cb9-2f4a-49d4-a11e-baba93f2379b",
+        "dateInit": "2022-05-29T02:45:32.735Z",
+        "idRoute": "a32cc903-9e43-4827-b061-ef69377bd6b2",
+
+    }
+}
+
+```
+
+
+#### Terminar Batimetria
+- PATCH: /bathymetry/finishBathy
+
+_Body_
+
+```javascript
+{
+    "_id": "0ef33cb9-2f4a-49d4-a11e-baba93f2379b"
+}
+
+```
+
+_Response 200_
+
+```javascript
+{
+    "message": "Batimetria finalizada!"
 }
 
 ```
