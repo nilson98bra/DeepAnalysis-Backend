@@ -189,7 +189,7 @@ exports.verifyCode = async(req,res)=>{
                 
                 await User.findOneAndUpdate({email:email},{tokenUser:token, refreshTokenUser:refreshToken})
 
-                return res.status(200).send({"token":token, "refreshToken":refreshToken})
+                return res.status(200).send({"token":token, "refreshToken":refreshToken, "nameUser": user.nameUser, "phone": user.phone})
 
             }
             
