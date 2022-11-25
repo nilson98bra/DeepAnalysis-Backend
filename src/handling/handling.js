@@ -83,7 +83,7 @@ exports.validateNumericValues = (args,maxs=[],mins=[])=>{
           if (args[key] < mins[index]){
             listErros.push(`Campo '${key}' deve ser maior que ${mins[index]}.`)
           }
-       }
+       } 
      }
 
      return listErros.length == 0? null : listErros
@@ -185,4 +185,113 @@ exports.validateBooleanValues = (args)=>{
    }).filter(curr => !!curr)
   
    return erros
+}
+
+exports.valedateDeeps = (array)=>{
+  
+  listErros=[]
+  array.map((curr,index)=>{
+    if (curr.hasOwnProperty("idBathy")){
+      listErros.push(`Campo 'idbathy' da profundidade nº ${index} deve existir!`)
+    }
+    else{
+        if(!curr['idBathy']){
+        
+          listErros.push(`Campo 'idbathy' da profundidade nº ${index} não pode ser vazio!`)
+      }
+
+      else{
+          if(String(curr['idBathy']).length != 36){    
+            listErros.push(`Campo 'idbathy' da profundidade nº ${index} deve ter exatamente 36 caracteres!`)
+          }   
+      }
+    }
+    
+    if(curr.hasOwnProperty("value")){
+     
+      listErros.push(`Campo 'value' da profundidade nº ${index} não pode ser vazio!`)
+  }
+  else{
+     if(!!isNaN(curr['value'])){
+
+       listErros.push(`Campo 'value' da profundidade nº ${index} deve ser numérico!`)
+ 
+     }
+      if(curr['value'] >999){   
+          listErros.push(`Campo 'value' da profundidade nº ${index} deve ser menor que 999.`)
+      }
+      if (curr['value'] < -999){
+        listErros.push(`Campo 'value' da profundidade nº ${index} deve ser maior que 999.`)
+      }
+    
+  }
+
+  Object.keys(args).map((key)=>{
+    const listErros = []
+    let campoAtual
+    switch(key){
+      case "lt":
+        campoAtual="Topo Esquerda";
+        break;
+      case "rt":
+        campoAtual="Topo Direita";
+        break;
+      case "lb":
+        campoAtual="Esqueda Baixo";
+        break;
+      case "rb":
+        campoAtual="Direita Baixo";
+        break;
+      default:
+        campoAtual="coordinate"
+        break;
+      }
+    
+    if(!curr['coordinate'].coordinates){
+      listErros.push(`Campo 'value' da profundidade nº ${index} não pode ser vazia!`)
+    }
+    else{
+      if(curr['coordinate'].coordinates.length != 2){
+        listErros.push(`Latitude e longitude da profundidade nº ${index}' devem ser inseridas!`)
+      }
+      
+      else{
+          if(!curr['coordinate'].coordinates[0]){
+            listErros.push(`Latitude do campo '${campoAtual}' da profundidade nº ${index}' não pode ser vazia!`)
+          }
+          if(!curr['coordinate'].coordinates[1]){
+            listErros.push(`Longitude do campo '${campoAtual}' da profundidade nº ${index}' não pode ser vazia!`)
+          }
+          else{
+            if(isNaN(curr['coordinate'].coordinates[0])){
+              listErros.push(`Latitude do campo '${campoAtual}' da profundidade nº ${index}' deve ser numérica!`)
+            }
+            if(isNaN(curr['coordinate'].coordinates[1])){
+              listErros.push(`Longitude do campo '${campoAtual}' da profundidade nº ${index}' deve ser numérica!`)
+            }
+        
+            if(curr['coordinate'].coordinates[0] > 90 || curr['coordinate'].coordinates[0] < -90){
+              listErros.push(`Latitude do campo '${campoAtual}' da profundidade nº ${index}' deve estar no intervalode 90 a -90!`)
+            }
+            if(curr['coordinate'].coordinates[1] > 180 || curr['coordinate'].coordinates[1] < -180){
+              listErros.push(`Longitude do campo '${campoAtual}' da profundidade nº ${index}' deve estar no intervalo de 180 a -180!`)
+            }
+        
+            if(String(curr['coordinate'].coordinates[0]).split(".")[1].length < 4){
+        
+              listErros.push(`Deve ter no mínimo 5 casas decimais na latitude do campo '${campoAtual}' da profundidade nº ${index}'!`)
+            }
+            if(String(curr['coordinate'].coordinates[1]).split(".")[1].length < 4){
+              listErros.push(`Deve ter no mínimo 5 casas decimais na longitude do campo '${campoAtual}' da profundidade nº ${index}'!`)
+            }
+          }
+        }
+  }
+
+
+  })
+    
+  })
+
+  return listErros
 }

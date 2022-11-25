@@ -22,7 +22,7 @@ exports.insertDeep = async (req,res)=>{
     if(!route){
         return res.status(404).send({"error": "Batimetria não cadastrada."})
     }
-    await Deep.create({
+    await Deep.insertMany({
         _id: uuid(),
         coordinate:coordinate,
         value: value,
