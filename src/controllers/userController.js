@@ -16,7 +16,7 @@ exports.cadUserEmail= async(req,res)=>{
     try{
         const {email} = req.body
         const emailValues = {"email":email}
-        const emailErros = await handlingErrors.validateEmail(emailValues)
+        const emailErros = handlingErrors.validateEmail(emailValues)
 
         if(emailErros.length !=0){
             return res.status(400).send({"mensagem":emailErros})
