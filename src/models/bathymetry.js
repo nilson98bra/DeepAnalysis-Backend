@@ -17,6 +17,11 @@ const BathySchema = mongoose.Schema({
     idRoute:{
         type: String,
         required: true
+    },
+
+    idUser:{
+        type: String,
+        required: true
     }
 
     

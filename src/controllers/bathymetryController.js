@@ -17,7 +17,8 @@ exports.cadBathy = async (req,res,next)=>{
         const bathyCriado = await Bathy.create({
             _id: uuid(),
             dateInit: new Date().toISOString(),
-            idRoute: idRoute
+            idRoute: idRoute,
+            idUser: req.user._id
         })
         return res.status(201).send({"message": bathyCriado})
     }
@@ -30,15 +31,19 @@ exports.cadBathy = async (req,res,next)=>{
 exports.getBathy = async (req,res)=>{
 
     try{
-        const {id} = req.params
-        const stringErros = handlingErros.validateString(req.params,[36],[36])
+        if(req.params.id){
+            const stringErros = handlingErros.validateString(req.params,[36],[36])
         
-        if(stringErros.length != 0){
-            return res.status(400).send({"erros": stringErros})
+            if(stringErros.length != 0){
+                return res.status(400).send({"erros": stringErros})
+            }
+            const bathy = await Bathy.findById({"_id":req.params.id})
+            return res.status(200).send({"data": bathy})
         }
-
-        const bathy = await Bathy.findById({"_id":id})
+       
+        const bathy = await Bathy.find({"idUser":req.user._id})
         return res.status(200).send({"data": bathy})
+       
     }catch(error){
 
         return res.status(400).send({"message":error})
