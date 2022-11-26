@@ -5,7 +5,10 @@ const DeepSchema = mongoose.Schema({
         type: String,
 
     },
-    coordinate:{
+    deeps:[ 
+        {   
+        coordinate:{
+
         type: {
             type: String,
             enum: ['Point'],
@@ -20,7 +23,7 @@ const DeepSchema = mongoose.Schema({
     value:{
         type: Number,
         required: true
-    },
+    }}],
 
     idBathy:{
         type: String,
