@@ -346,13 +346,30 @@ _Body_
 
 ```javascript
 {
-    "coordinate":{
-        "type":"Point",
-        "coordinates":[-46.39744, -23.98753]
-    },
-    "value": 1000,
-    "idRoute":"552a0c63-c62f-4813-a72e-b204d737d703"
+    "deeps":[{
+                "coordinate":{
+                "type":"Point",
+                "coordinates":[89.44411, -23.91111]
+            },
+            "value": 999
+            },
+            {
+                "coordinate":{
+                "type":"Point",
+                "coordinates":[-46.31111, -23.91111]
+            },
+            "value": 999
+            },
+            {
+                "coordinate":{
+                "type":"Point",
+                "coordinates":[-46.31111, -23.91111]
+            },
+            "value": 998
+            }],
+    "idBathy":"0c1612f5-9852-494d-9941-b5479916b80a"
 }
+
 
 ```
 
